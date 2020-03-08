@@ -1,0 +1,21 @@
+Usage:
+  mongoxtop <options> <polling interval in seconds>
+
+Monitor basic usage statistics for each collection.
+
+filtering options:
+      --collection=<regex>                        regular expression to filter collections
+
+general options:
+      --help                                      print usage
+      --version                                   print the tool version and exit
+
+output options:
+      --csv                                       format output as CSV
+      --delimiter=<string>                        delimeter for CSV format
+      --json                                      format output as JSON
+      --text                                      format output as text
+      --xml                                       format output as XML
+
+See http://docs.mongodb.org/manual/reference/program/mongotop/ for more information.
+
