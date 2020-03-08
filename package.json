@@ -1,0 +1,27 @@
+{
+  "name": "mongodb-dba-tools",
+  "version": "1.0.0",
+  "description": "MongoDB Database Administrators' Tools",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anars/mongodb-dba-tools.git"
+  },
+  "keywords": [
+    "MongoDB",
+    "DBA",
+    "Tools",
+    "Monitor",
+    "Stats",
+    "Database"
+  ],
+  "author": "Kay Anar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anars/mongodb-dba-tools/issues"
+  },
+  "homepage": "https://github.com/anars/mongodb-dba-tools#readme"
+}
