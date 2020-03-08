@@ -7,8 +7,8 @@ const mongotopParams = [];
 
 process.argv.forEach((param, index) => {
   if (index > 1) { // eslint-disable-line no-magic-numbers
-    if (param.toLowerCase().startsWith("--regex=")) {
-      nsRegEx = new RegExp(param.substr(8), "u"); // eslint-disable-line no-magic-numbers
+    if (param.toLowerCase().startsWith("--collection=")) {
+      nsRegEx = new RegExp(param.substr(13), "u"); // eslint-disable-line no-magic-numbers
     } else if (param.toLowerCase().startsWith("--delimiter=")) {
       delimiter = param.substr(12); // eslint-disable-line no-magic-numbers
     } else if (param.toLowerCase() === "--help") {
@@ -21,6 +21,8 @@ process.argv.forEach((param, index) => {
       outputFormat = "csv";
     } else if (param.toLowerCase() === "--xml") {
       outputFormat = "xml";
+    } else if (param.toLowerCase() === "--text") {
+      outputFormat = "text";
     } else if (!param.toLowerCase().startsWith("--verbose") && !param.toLowerCase().startsWith("-v")) {
       mongotopParams.push(param);
     }
@@ -86,3 +88,4 @@ mongotop.on("close", (code) => {
     console.error(`Error : ${code}`); // eslint-disable-line no-console
   }
 });
+s
