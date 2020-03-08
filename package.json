@@ -2,9 +2,10 @@
   "name": "mongodb-dba-tools",
   "version": "1.0.0",
   "description": "MongoDB Database Administrators' Tools",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "gulp clean",
+    "build": "gulp build",
+    "watch": "gulp watch"
   },
   "repository": {
     "type": "git",
@@ -12,7 +13,10 @@
   },
   "keywords": [
     "MongoDB",
+    "Document Oriented Database",
     "DBA",
+    "Database Administration",
+    "Database Administrator",
     "Tools",
     "Monitor",
     "Stats",
@@ -32,6 +36,7 @@
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
+    "eslint-plugin-standard": "^4.0.1",
+    "gulp": "^4.0.2"
   }
 }
