@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 let outputFormat = "text";
 let nsRegEx = new RegExp(".*", "u");
 let delimiter = ",";
@@ -45,15 +47,15 @@ const dumpCSV = function dumpCSV(json) {
   if (firstRow) {
     keys.length = 0;
     const headers = ["timestamp"];
-    for (const header in json.totals) {
-      if (nsRegEx.test(header) && Reflect.has(json.totals, header)) {
-        keys.push(header);
-        headers.push(`${header} (total time)`);
-        headers.push(`${header} (total count)`);
-        headers.push(`${header} (read time)`);
-        headers.push(`${header} (read count)`);
-        headers.push(`${header} (write time)`);
-        headers.push(`${header} (write count)`);
+    for (const collection in json.totals) {
+      if (Reflect.has(json.totals, collection)) {
+        keys.push(collection);
+        headers.push(`${collection} (total time)`);
+        headers.push(`${collection} (total count)`);
+        headers.push(`${collection} (read time)`);
+        headers.push(`${collection} (read count)`);
+        headers.push(`${collection} (write time)`);
+        headers.push(`${collection} (write count)`);
       }
     }
     console.log(headers.join(delimiter));
@@ -76,8 +78,28 @@ const dumpJSON = function dumpJSON(json) {
     console.log(`[\n${JSON.stringify(json, null, spacer)}`);
     firstRow = false;
   } else {
-    console.log(`,${JSON.stringify(json, null, spacer)}`);
+    console.log(`,\n${JSON.stringify(json, null, spacer)}`);
   }
+};
+
+const dumpXML = function dumpXML(json) {
+  if (firstRow) {
+    console.log("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<top>");
+    firstRow = false;
+  }
+  console.log(`${"".padStart(spacer, " ")}<totals timestamp="${json.time}">`);
+  for (const collection in json.totals) {
+    if (Reflect.has(json.totals, collection)) {
+      console.log(`${"".padStart(spacer * 2, " ")}<collection "name"="${collection}" \
+"total-time"="${json.totals[collection].total.time}" \
+"total-count"="${json.totals[collection].total.count}" \
+"read-time"="${json.totals[collection].read.time}" \
+"read-count"="${json.totals[collection].read.count}" \
+"write-time"="${json.totals[collection].write.time}" \
+"write-count"="${json.totals[collection].write.count}"/>`);
+    }
+  }
+  console.log(`${"".padStart(spacer, " ")}</totals>`);
 };
 
 const {spawn} = require("child_process");
@@ -88,10 +110,19 @@ const mongotop = spawn("mongotop", [
 
 mongotop.stdout.on("data", (data) => {
   const json = JSON.parse(data);
+  for (const collection in json.totals) {
+    if (Reflect.has(json.totals, collection)) {
+      if (!nsRegEx.test(collection)) {
+        delete json.totals[collection];
+      }
+    }
+  }
   if (outputFormat === "csv") {
     dumpCSV(json);
   } else if (outputFormat === "json") {
     dumpJSON(json);
+  } else if (outputFormat === "xml") {
+    dumpXML(json);
   }
 });
 
@@ -105,6 +136,8 @@ mongotop.on("close", (code) => {
   } else {
     if (outputFormat === "json") {
       console.log("]");
+    } else if (outputFormat === "xml") {
+      console.log("</top>");
     }
   }
 });
