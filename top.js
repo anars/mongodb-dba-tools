@@ -90,13 +90,13 @@ const dumpXML = function dumpXML(json) {
   console.log(`${"".padStart(spacer, " ")}<totals timestamp="${json.time}">`);
   for (const collection in json.totals) {
     if (Reflect.has(json.totals, collection)) {
-      console.log(`${"".padStart(spacer * 2, " ")}<collection "name"="${collection}" \
-"total-time"="${json.totals[collection].total.time}" \
-"total-count"="${json.totals[collection].total.count}" \
-"read-time"="${json.totals[collection].read.time}" \
-"read-count"="${json.totals[collection].read.count}" \
-"write-time"="${json.totals[collection].write.time}" \
-"write-count"="${json.totals[collection].write.count}"/>`);
+      console.log(`${"".padStart(spacer * 2, " ")}<collection name="${collection}" \
+total-time="${json.totals[collection].total.time}" \
+total-count="${json.totals[collection].total.count}" \
+read-time="${json.totals[collection].read.time}" \
+read-count="${json.totals[collection].read.count}" \
+write-time="${json.totals[collection].write.time}" \
+write-count="${json.totals[collection].write.count}"/>`);
     }
   }
   console.log(`${"".padStart(spacer, " ")}</totals>`);
