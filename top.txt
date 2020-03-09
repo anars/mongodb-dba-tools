@@ -1,5 +1,5 @@
 Usage:
-  mongoxtop <options> <polling interval in seconds>
+  mongotopx <options> <polling interval in seconds>
 
 Monitor basic usage statistics for each collection.
 
@@ -12,10 +12,11 @@ general options:
 
 output options:
       --csv                                       format output as CSV
-      --delimiter=<string>                        delimeter for CSV format
       --json                                      format output as JSON
       --text                                      format output as text
       --xml                                       format output as XML
+      --delimiter=<string>                        delimeter for CSV format
+      --spacer=<number>                           the number of space characters to use
+                                                  to indent JSON and XML
 
 See http://docs.mongodb.org/manual/reference/program/mongotop/ for more information.
-
