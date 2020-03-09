@@ -102,6 +102,27 @@ const dumpXML = function dumpXML(json) {
   console.log(`${"".padStart(spacer, " ")}</totals>`);
 };
 
+const dumpText = function dumpText(json) {
+  console.log(`${json.time.padStart(spacer, " ")}\
+${"total (time)".padStart(16, " ")}\
+${"total (count)".padStart(16, " ")}\
+${"read (time)".padStart(16, " ")}\
+${"read (count)".padStart(16, " ")}\
+${"write (time)".padStart(16, " ")}\
+${"write (count)".padStart(16, " ")}`);
+  for (const collection in json.totals) {
+    if (Reflect.has(json.totals, collection)) {
+      console.log(`${collection.padStart(spacer, " ")}\
+${json.totals[collection].total.time.toString().padStart(16, " ")}\
+${json.totals[collection].total.count.toString().padStart(16, " ")}\
+${json.totals[collection].read.time.toString().padStart(16, " ")}\
+${json.totals[collection].read.count.toString().padStart(16, " ")}\
+${json.totals[collection].write.time.toString().padStart(16, " ")}\
+${json.totals[collection].write.count.toString().padStart(16, " ")}`);
+    }
+  }
+};
+
 const {spawn} = require("child_process");
 const mongotop = spawn("mongotop", [
   ...mongotopParams,
@@ -110,10 +131,20 @@ const mongotop = spawn("mongotop", [
 
 mongotop.stdout.on("data", (data) => {
   const json = JSON.parse(data);
+  if (outputFormat === "text") {
+    spacer = 0;
+  }
   for (const collection in json.totals) {
     if (Reflect.has(json.totals, collection)) {
       if (!nsRegEx.test(collection)) {
         delete json.totals[collection];
+      } else {
+        if (outputFormat === "text" && collection.length > spacer) {
+          spacer = collection.length;
+        }
+        if (outputFormat === "text" && json.time.length > spacer) {
+          spacer = json.time.length;
+        }
       }
     }
   }
@@ -123,6 +154,8 @@ mongotop.stdout.on("data", (data) => {
     dumpJSON(json);
   } else if (outputFormat === "xml") {
     dumpXML(json);
+  } else if (outputFormat === "text") {
+    dumpText(json);
   }
 });
 
