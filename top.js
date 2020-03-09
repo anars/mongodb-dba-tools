@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 let outputFormat = "text";
 let nsRegEx = new RegExp(".*", "u");
 let delimiter = ",";
@@ -35,9 +33,9 @@ process.argv.forEach((param, index) => {
 });
 
 if (printHelp) {
-
+  process.exit(0);
 } else if (printVersion) {
-
+  process.exit(0);
 }
 
 let firstRow = true;
