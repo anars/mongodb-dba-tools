@@ -1,7 +1,11 @@
 Usage:
   mongotopx <options> <polling interval in seconds>
 
-Monitor basic usage statistics for each collection.
+mongotopx is a wrapper for mongotop for better collection filtering and output.
+
+mongotopx provides a method to track the amount of time a MongoDB instance mongod spends
+reading and writing data. mongotopx provides statistics on a per-collection level.
+By default, mongotopx returns values every second.
 
 filtering options:
       --collection=<regex>                        regular expression to filter collections
@@ -18,5 +22,55 @@ output options:
       --delimiter=<string>                        delimeter for CSV format
       --spacer=<number>                           the number of space characters to use
                                                   to indent JSON and XML
+      --locks                                     report on use of per-database
+                                                  locks
+  -n, --rowcount=<count>                          number of stats lines to
+                                                  print (0 for indefinite)
+
+connection options:
+  -h, --host=<hostname>                           mongodb host(s) to connect to
+                                                  (use commas to delimit hosts)
+      --port=<port>                               server port (can also use
+                                                  --host hostname:port)
+
+ssl options:
+      --ssl                                       connect to a mongod or mongos
+                                                  that has ssl enabled
+      --sslCAFile=<filename>                      the .pem file containing the
+                                                  root certificate chain from
+                                                  the certificate authority
+      --sslPEMKeyFile=<filename>                  the .pem file containing the
+                                                  certificate and key
+      --sslPEMKeyPassword=<password>              the password to decrypt the
+                                                  sslPEMKeyFile, if necessary
+      --sslCRLFile=<filename>                     the .pem file containing the
+                                                  certificate revocation list
+      --sslAllowInvalidCertificates               bypass the validation for
+                                                  server certificates
+      --sslAllowInvalidHostnames                  bypass the validation for
+                                                  server name
+      --sslFIPSMode                               use FIPS mode of the
+                                                  installed openssl library
+
+authentication options:
+  -u, --username=<username>                       username for authentication
+  -p, --password=<password>                       password for authentication
+      --authenticationDatabase=<database-name>    database that holds the
+                                                  user's credentials
+      --authenticationMechanism=<mechanism>       authentication mechanism to
+                                                  use
+
+kerberos options:
+      --gssapiServiceName=<service-name>          service name to use when
+                                                  authenticating using
+                                                  GSSAPI/Kerberos (default:
+                                                  mongodb)
+      --gssapiHostName=<host-name>                hostname to use when
+                                                  authenticating using
+                                                  GSSAPI/Kerberos (default:
+                                                  <remote server's address>)
+
+uri options:
+      --uri=mongodb-uri                           mongodb uri connection string
 
 See http://docs.mongodb.org/manual/reference/program/mongotop/ for more information.
