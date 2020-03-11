@@ -1,4 +1,4 @@
-let outputFormat = "text";
+let format = "text";
 let nsRegEx = new RegExp(".*", "u");
 let delimiter = ",";
 let spacer = 2;
@@ -19,13 +19,13 @@ process.argv.forEach((param, index) => {
     } else if (param.toLowerCase() === "--version") {
       printVersion = true;
     } else if (param.toLowerCase() === "--json") {
-      outputFormat = "json";
+      format = "json";
     } else if (param.toLowerCase() === "--csv") {
-      outputFormat = "csv";
+      format = "csv";
     } else if (param.toLowerCase() === "--xml") {
-      outputFormat = "xml";
+      format = "xml";
     } else if (param.toLowerCase() === "--text") {
-      outputFormat = "text";
+      format = "text";
     } else if (!param.toLowerCase().startsWith("--verbose") && !param.toLowerCase().startsWith("-v")) {
       mongotopParams.push(param);
     }
@@ -33,6 +33,71 @@ process.argv.forEach((param, index) => {
 });
 
 if (printHelp) {
+  console.log("Usage:");
+  console.log("  mongotopx <options> <polling interval in seconds>\n");
+  console.log("mongotopx is a wrapper for mongotop for better collection filtering and output.\n");
+  console.log("mongotopx provides a method to track the amount of time a MongoDB instance mongod spends");
+  console.log("reading and writing data. mongotopx provides statistics on a per-collection level.");
+  console.log("By default, mongotopx returns values every second.\n");
+  console.log("filtering options:");
+  console.log("      --collection=<regex>                        regular expression to filter collections\n");
+  console.log("general options:");
+  console.log("      --help                                      print usage");
+  console.log("      --version                                   print the tool version and exit\n");
+  console.log("output options:");
+  console.log("      --csv                                       format output as CSV");
+  console.log("      --json                                      format output as JSON");
+  console.log("      --text                                      format output as text");
+  console.log("      --xml                                       format output as XML");
+  console.log("      --delimiter=<string>                        delimeter for CSV format");
+  console.log("      --spacer=<number>                           the number of space characters to use");
+  console.log("                                                  to indent JSON and XML");
+  console.log("      --locks                                     report on use of per-database");
+  console.log("                                                  locks");
+  console.log("  -n, --rowcount=<count>                          number of stats lines to");
+  console.log("                                                  print (0 for indefinite)\n");
+  console.log("connection options:");
+  console.log("  -h, --host=<hostname>                           mongodb host(s) to connect to");
+  console.log("                                                  (use commas to delimit hosts)");
+  console.log("      --port=<port>                               server port (can also use");
+  console.log("                                                  --host hostname:port)\n");
+  console.log("ssl options:");
+  console.log("      --ssl                                       connect to a mongod or mongos");
+  console.log("                                                  that has ssl enabled");
+  console.log("      --sslCAFile=<filename>                      the .pem file containing the");
+  console.log("                                                  root certificate chain from");
+  console.log("                                                  the certificate authority");
+  console.log("      --sslPEMKeyFile=<filename>                  the .pem file containing the");
+  console.log("                                                  certificate and key");
+  console.log("      --sslPEMKeyPassword=<password>              the password to decrypt the");
+  console.log("                                                  sslPEMKeyFile, if necessary");
+  console.log("      --sslCRLFile=<filename>                     the .pem file containing the");
+  console.log("                                                  certificate revocation list");
+  console.log("      --sslAllowInvalidCertificates               bypass the validation for");
+  console.log("                                                  server certificates");
+  console.log("      --sslAllowInvalidHostnames                  bypass the validation for");
+  console.log("                                                  server name");
+  console.log("      --sslFIPSMode                               use FIPS mode of the");
+  console.log("                                                  installed openssl library\n");
+  console.log("authentication options:");
+  console.log("  -u, --username=<username>                       username for authentication");
+  console.log("  -p, --password=<password>                       password for authentication");
+  console.log("      --authenticationDatabase=<database-name>    database that holds the");
+  console.log("                                                  user's credentials");
+  console.log("      --authenticationMechanism=<mechanism>       authentication mechanism to");
+  console.log("                                                  use\n");
+  console.log("kerberos options:");
+  console.log("      --gssapiServiceName=<service-name>          service name to use when");
+  console.log("                                                  authenticating using");
+  console.log("                                                  GSSAPI/Kerberos (default:");
+  console.log("                                                  mongodb)");
+  console.log("      --gssapiHostName=<host-name>                hostname to use when");
+  console.log("                                                  authenticating using");
+  console.log("                                                  GSSAPI/Kerberos (default:");
+  console.log("                                                  <remote server's address>)\n");
+  console.log("uri options:");
+  console.log("      --uri=mongodb-uri                           mongodb uri connection string\n");
+  console.log("See http://docs.mongodb.org/manual/reference/program/mongotop/ for more information.");
   process.exit(0);
 } else if (printVersion) {
   process.exit(0);
@@ -129,7 +194,7 @@ const mongotop = spawn("mongotop", [
 
 mongotop.stdout.on("data", (data) => {
   const json = JSON.parse(data);
-  if (outputFormat === "text") {
+  if (format === "text") {
     spacer = 0;
   }
   for (const collection in json.totals) {
@@ -137,22 +202,22 @@ mongotop.stdout.on("data", (data) => {
       if (!nsRegEx.test(collection)) {
         delete json.totals[collection];
       } else {
-        if (outputFormat === "text" && collection.length > spacer) {
+        if (format === "text" && collection.length > spacer) {
           spacer = collection.length;
         }
-        if (outputFormat === "text" && json.time.length > spacer) {
+        if (format === "text" && json.time.length > spacer) {
           spacer = json.time.length;
         }
       }
     }
   }
-  if (outputFormat === "csv") {
+  if (format === "csv") {
     dumpCSV(json);
-  } else if (outputFormat === "json") {
+  } else if (format === "json") {
     dumpJSON(json);
-  } else if (outputFormat === "xml") {
+  } else if (format === "xml") {
     dumpXML(json);
-  } else if (outputFormat === "text") {
+  } else if (format === "text") {
     dumpText(json);
   }
 });
@@ -165,9 +230,9 @@ mongotop.on("close", (code) => {
   if (code !== 0) { // eslint-disable-line no-magic-numbers
     console.error(`Error : ${code}`);
   } else {
-    if (outputFormat === "json") {
+    if (format === "json") {
       console.log("]");
-    } else if (outputFormat === "xml") {
+    } else if (format === "xml") {
       console.log("</top>");
     }
   }
