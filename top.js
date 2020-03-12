@@ -125,7 +125,7 @@ process.argv.forEach((param, index) => {
 });
 
 if (params.length === 0) {
-  console.log("MongoDB Database Administrators' Tools version ### by Kay Anar" +
+  console.log("MongoDB Database Administrators' Tools version ### by Kay Anar\n\n" +
     "Copyright (c) 2020 Anar Software LLC http://anars.com\n\n" +
     "Use --help parameter for usage.");
   process.exit(0);
