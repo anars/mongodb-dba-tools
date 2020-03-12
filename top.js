@@ -2,8 +2,6 @@ let format = "text";
 let nsRegEx = new RegExp(".*", "u");
 let delimiter = ",";
 let spacer = 2;
-let help = false;
-let version = false;
 const params = [];
 
 process.argv.forEach((param, index) => {
@@ -15,9 +13,103 @@ process.argv.forEach((param, index) => {
     } else if (param.toLowerCase().startsWith("--spacer=")) {
       spacer = Number.parseInt(param.substr(9)); // eslint-disable-line no-magic-numbers
     } else if (param.toLowerCase() === "--help") {
-      help = true;
+      console.log("Usage:\n" +
+        "  mongotopx <options> <polling interval in seconds>\n\n" +
+        "mongotopx is a wrapper for mongotop for better collection filtering and\n" +
+        "output.\n\n" +
+        "mongotopx provides a method to track the amount of time a MongoDB\n" +
+        "instance mongod spends reading and writing data. mongotopx provides\n" +
+        "statistics on a per-collection level. By default, mongotopx returns\n" +
+        "values every second.\n\n" +
+        "filtering options:\n" +
+        "      --collection=<regex>\n" +
+        "        regular expression to filter collections\n\n" +
+        "general options:\n" +
+        "      --help\n" +
+        "        print usage\n\n" +
+        "      --version\n" +
+        "        print the tool version and exit\n\n" +
+        "output options:\n" +
+        "      --csv\n" +
+        "        format output as CSV\n\n" +
+        "      --json\n" +
+        "        format output as JSON\n\n" +
+        "      --text\n" +
+        "        format output as text\n\n" +
+        "      --xml\n" +
+        "        format output as XML\n\n" +
+        "      --delimiter=<string>\n" +
+        "        delimeter for CSV format\n\n" +
+        "      --spacer=<number>\n" +
+        "        the number of space characters to use to indent JSON and XML\n\n" +
+        "      --locks\n" +
+        "        report on use of per-database locks\n\n" +
+        "  -n, --rowcount=<count>\n" +
+        "        number of stats lines toprint (0 for indefinite)\n\n" +
+        "connection options:\n" +
+        "  -h, --host=<hostname>\n" +
+        "        mongodb host(s) to connect to (use commas to delimit hosts)\n\n" +
+        "      --port=<port>\n" +
+        "        server port (can also use --host hostname:port)\n\n" +
+        "ssl options:\n" +
+        "      --ssl\n" +
+        "        connect to a mongod or mongosthat has ssl enabled\n\n" +
+        "      --sslCAFile=<filename>\n" +
+        "        the .pem file containing the root certificate chain from\n" +
+        "        the certificate authority\n\n" +
+        "      --sslPEMKeyFile=<filename>\n" +
+        "        the .pem file containing the certificate and key\n\n" +
+        "      --sslPEMKeyPassword=<password>\n" +
+        "        the password to decrypt the sslPEMKeyFile, if necessary\n\n" +
+        "      --sslCRLFile=<filename>\n" +
+        "        the .pem file containing the certificate revocation list\n\n" +
+        "      --sslAllowInvalidCertificates\n" +
+        "        bypass the validation for server certificates\n\n" +
+        "      --sslAllowInvalidHostnames\n" +
+        "        bypass the validation for server name\n\n" +
+        "      --sslFIPSMode\n" +
+        "        use FIPS mode of the installed openssl library\n\n" +
+        "authentication options:\n" +
+        "  -u, --username=<username>\n" +
+        "        username for authentication\n\n" +
+        "  -p, --password=<password>\n" +
+        "        password for authentication\n\n" +
+        "      --authenticationDatabase=<database-name>\n" +
+        "        database that holds the user's credentials\n\n" +
+        "      --authenticationMechanism=<mechanism>\n" +
+        "        authentication mechanism to use\n\n" +
+        "kerberos options:\n" +
+        "      --gssapiServiceName=<service-name>\n" +
+        "        service name to use when authenticating using GSSAPI/Kerberos\n" +
+        "        (default: mongodb)\n\n" +
+        "      --gssapiHostName=<host-name>\n" +
+        "        hostname to use when authenticating using GSSAPI/Kerberos\n" +
+        "        (default: <remote server's address>)\n\n" +
+        "uri options:\n" +
+        "      --uri=mongodb-uri\n" +
+        "        mongodb uri connection string\n\n" +
+        "See https://github.com/anars/mongodb-dba-tools/ for more information.\n");
+      process.exit(0);
     } else if (param.toLowerCase() === "--version") {
-      version = true;
+      console.log("MongoDB Database Administrators' Tools version ### by Kay Anar" +
+        "Copyright (c) 2020 Anar Software LLC http://anars.com\n" +
+        "Permission is hereby granted, free of charge, to any person obtaining a" +
+        "copy of this software and associated documentation files (the" +
+        "\"Software\"), to deal in the Software without restriction, including" +
+        "without limitation the rights to use, copy, modify, merge, publish," +
+        "distribute, sublicense, and/or sell copies of the Software, and to" +
+        "permit persons to whom the Software is furnished to do so, subject to" +
+        "the following conditions:\n" +
+        "The above copyright notice and this permission notice shall be included" +
+        "in all copies or substantial portions of the Software.\n" +
+        "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS" +
+        "OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF" +
+        "MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT." +
+        "IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY" +
+        "CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT," +
+        "TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE" +
+        "SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.");
+      process.exit(0);
     } else if (param.toLowerCase() === "--json") {
       format = "json";
     } else if (param.toLowerCase() === "--csv") {
@@ -32,103 +124,10 @@ process.argv.forEach((param, index) => {
   }
 });
 
-if (help) {
-  console.log("Usage:\n" +
-    "  mongotopx <options> <polling interval in seconds>\n\n" +
-    "mongotopx is a wrapper for mongotop for better collection filtering and\n" +
-    "output.\n\n" +
-    "mongotopx provides a method to track the amount of time a MongoDB\n" +
-    "instance mongod spends reading and writing data. mongotopx provides\n" +
-    "statistics on a per-collection level. By default, mongotopx returns\n" +
-    "values every second.\n\n" +
-    "filtering options:\n" +
-    "      --collection=<regex>\n" +
-    "        regular expression to filter collections\n\n" +
-    "general options:\n" +
-    "      --help\n" +
-    "        print usage\n\n" +
-    "      --version\n" +
-    "        print the tool version and exit\n\n" +
-    "output options:\n" +
-    "      --csv\n" +
-    "        format output as CSV\n\n" +
-    "      --json\n" +
-    "        format output as JSON\n\n" +
-    "      --text\n" +
-    "        format output as text\n\n" +
-    "      --xml\n" +
-    "        format output as XML\n\n" +
-    "      --delimiter=<string>\n" +
-    "        delimeter for CSV format\n\n" +
-    "      --spacer=<number>\n" +
-    "        the number of space characters to use to indent JSON and XML\n\n" +
-    "      --locks\n" +
-    "        report on use of per-database locks\n\n" +
-    "  -n, --rowcount=<count>\n" +
-    "        number of stats lines toprint (0 for indefinite)\n\n" +
-    "connection options:\n" +
-    "  -h, --host=<hostname>\n" +
-    "        mongodb host(s) to connect to (use commas to delimit hosts)\n\n" +
-    "      --port=<port>\n" +
-    "        server port (can also use --host hostname:port)\n\n" +
-    "ssl options:\n" +
-    "      --ssl\n" +
-    "        connect to a mongod or mongosthat has ssl enabled\n\n" +
-    "      --sslCAFile=<filename>\n" +
-    "        the .pem file containing the root certificate chain from\n" +
-    "        the certificate authority\n\n" +
-    "      --sslPEMKeyFile=<filename>\n" +
-    "        the .pem file containing the certificate and key\n\n" +
-    "      --sslPEMKeyPassword=<password>\n" +
-    "        the password to decrypt the sslPEMKeyFile, if necessary\n\n" +
-    "      --sslCRLFile=<filename>\n" +
-    "        the .pem file containing the certificate revocation list\n\n" +
-    "      --sslAllowInvalidCertificates\n" +
-    "        bypass the validation for server certificates\n\n" +
-    "      --sslAllowInvalidHostnames\n" +
-    "        bypass the validation for server name\n\n" +
-    "      --sslFIPSMode\n" +
-    "        use FIPS mode of the installed openssl library\n\n" +
-    "authentication options:\n" +
-    "  -u, --username=<username>\n" +
-    "        username for authentication\n\n" +
-    "  -p, --password=<password>\n" +
-    "        password for authentication\n\n" +
-    "      --authenticationDatabase=<database-name>\n" +
-    "        database that holds the user's credentials\n\n" +
-    "      --authenticationMechanism=<mechanism>\n" +
-    "        authentication mechanism to use\n\n" +
-    "kerberos options:\n" +
-    "      --gssapiServiceName=<service-name>\n" +
-    "        service name to use when authenticating using GSSAPI/Kerberos\n" +
-    "        (default: mongodb)\n\n" +
-    "      --gssapiHostName=<host-name>\n" +
-    "        hostname to use when authenticating using GSSAPI/Kerberos\n" +
-    "        (default: <remote server's address>)\n\n" +
-    "uri options:\n" +
-    "      --uri=mongodb-uri\n" +
-    "        mongodb uri connection string\n\n" +
-    "See https://github.com/anars/mongodb-dba-tools/ for more information.\n");
-  process.exit(0);
-} else if (version) {
+if (param.length === 0) {
   console.log("MongoDB Database Administrators' Tools version ### by Kay Anar" +
-    "Copyright (c) 2020 Anar Software LLC http://anars.com\n" +
-    "Permission is hereby granted, free of charge, to any person obtaining a" +
-    "copy of this software and associated documentation files (the" +
-    "\"Software\"), to deal in the Software without restriction, including" +
-    "without limitation the rights to use, copy, modify, merge, publish," +
-    "distribute, sublicense, and/or sell copies of the Software, and to" +
-    "permit persons to whom the Software is furnished to do so, subject to" +
-    "the following conditions:\n" +
-    "The above copyright notice and this permission notice shall be included" +
-    "in all copies or substantial portions of the Software.\n" +
-    "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS" +
-    "OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF" +
-    "MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT." +
-    "IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY" +
-    "CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT," +
-    "TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE" +
-    "SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.");
+    "Copyright (c) 2020 Anar Software LLC http://anars.com\n\n" +
+    "Use --help parameter for usage.");
   process.exit(0);
 }
 
