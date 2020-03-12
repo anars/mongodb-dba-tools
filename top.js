@@ -2,9 +2,9 @@ let format = "text";
 let nsRegEx = new RegExp(".*", "u");
 let delimiter = ",";
 let spacer = 2;
-let printHelp = false;
-let printVersion = false;
-const mongotopParams = [];
+let help = false;
+let version = false;
+const params = [];
 
 process.argv.forEach((param, index) => {
   if (index > 1) { // eslint-disable-line no-magic-numbers
@@ -15,9 +15,9 @@ process.argv.forEach((param, index) => {
     } else if (param.toLowerCase().startsWith("--spacer=")) {
       spacer = Number.parseInt(param.substr(9)); // eslint-disable-line no-magic-numbers
     } else if (param.toLowerCase() === "--help") {
-      printHelp = true;
+      help = true;
     } else if (param.toLowerCase() === "--version") {
-      printVersion = true;
+      version = true;
     } else if (param.toLowerCase() === "--json") {
       format = "json";
     } else if (param.toLowerCase() === "--csv") {
@@ -27,79 +27,108 @@ process.argv.forEach((param, index) => {
     } else if (param.toLowerCase() === "--text") {
       format = "text";
     } else if (!param.toLowerCase().startsWith("--verbose") && !param.toLowerCase().startsWith("-v")) {
-      mongotopParams.push(param);
+      params.push(param);
     }
   }
 });
 
-if (printHelp) {
-  console.log("Usage:");
-  console.log("  mongotopx <options> <polling interval in seconds>\n");
-  console.log("mongotopx is a wrapper for mongotop for better collection filtering and output.\n");
-  console.log("mongotopx provides a method to track the amount of time a MongoDB instance mongod spends");
-  console.log("reading and writing data. mongotopx provides statistics on a per-collection level.");
-  console.log("By default, mongotopx returns values every second.\n");
-  console.log("filtering options:");
-  console.log("      --collection=<regex>                        regular expression to filter collections\n");
-  console.log("general options:");
-  console.log("      --help                                      print usage");
-  console.log("      --version                                   print the tool version and exit\n");
-  console.log("output options:");
-  console.log("      --csv                                       format output as CSV");
-  console.log("      --json                                      format output as JSON");
-  console.log("      --text                                      format output as text");
-  console.log("      --xml                                       format output as XML");
-  console.log("      --delimiter=<string>                        delimeter for CSV format");
-  console.log("      --spacer=<number>                           the number of space characters to use");
-  console.log("                                                  to indent JSON and XML");
-  console.log("      --locks                                     report on use of per-database");
-  console.log("                                                  locks");
-  console.log("  -n, --rowcount=<count>                          number of stats lines to");
-  console.log("                                                  print (0 for indefinite)\n");
-  console.log("connection options:");
-  console.log("  -h, --host=<hostname>                           mongodb host(s) to connect to");
-  console.log("                                                  (use commas to delimit hosts)");
-  console.log("      --port=<port>                               server port (can also use");
-  console.log("                                                  --host hostname:port)\n");
-  console.log("ssl options:");
-  console.log("      --ssl                                       connect to a mongod or mongos");
-  console.log("                                                  that has ssl enabled");
-  console.log("      --sslCAFile=<filename>                      the .pem file containing the");
-  console.log("                                                  root certificate chain from");
-  console.log("                                                  the certificate authority");
-  console.log("      --sslPEMKeyFile=<filename>                  the .pem file containing the");
-  console.log("                                                  certificate and key");
-  console.log("      --sslPEMKeyPassword=<password>              the password to decrypt the");
-  console.log("                                                  sslPEMKeyFile, if necessary");
-  console.log("      --sslCRLFile=<filename>                     the .pem file containing the");
-  console.log("                                                  certificate revocation list");
-  console.log("      --sslAllowInvalidCertificates               bypass the validation for");
-  console.log("                                                  server certificates");
-  console.log("      --sslAllowInvalidHostnames                  bypass the validation for");
-  console.log("                                                  server name");
-  console.log("      --sslFIPSMode                               use FIPS mode of the");
-  console.log("                                                  installed openssl library\n");
-  console.log("authentication options:");
-  console.log("  -u, --username=<username>                       username for authentication");
-  console.log("  -p, --password=<password>                       password for authentication");
-  console.log("      --authenticationDatabase=<database-name>    database that holds the");
-  console.log("                                                  user's credentials");
-  console.log("      --authenticationMechanism=<mechanism>       authentication mechanism to");
-  console.log("                                                  use\n");
-  console.log("kerberos options:");
-  console.log("      --gssapiServiceName=<service-name>          service name to use when");
-  console.log("                                                  authenticating using");
-  console.log("                                                  GSSAPI/Kerberos (default:");
-  console.log("                                                  mongodb)");
-  console.log("      --gssapiHostName=<host-name>                hostname to use when");
-  console.log("                                                  authenticating using");
-  console.log("                                                  GSSAPI/Kerberos (default:");
-  console.log("                                                  <remote server's address>)\n");
-  console.log("uri options:");
-  console.log("      --uri=mongodb-uri                           mongodb uri connection string\n");
-  console.log("See http://docs.mongodb.org/manual/reference/program/mongotop/ for more information.");
+if (help) {
+  console.log("Usage:\n" +
+    "  mongotopx <options> <polling interval in seconds>\n\n" +
+    "mongotopx is a wrapper for mongotop for better collection filtering and\n" +
+    "output.\n\n" +
+    "mongotopx provides a method to track the amount of time a MongoDB\n" +
+    "instance mongod spends reading and writing data. mongotopx provides\n" +
+    "statistics on a per-collection level. By default, mongotopx returns\n" +
+    "values every second.\n\n" +
+    "filtering options:\n" +
+    "      --collection=<regex>\n" +
+    "        regular expression to filter collections\n\n" +
+    "general options:\n" +
+    "      --help\n" +
+    "        print usage\n\n" +
+    "      --version\n" +
+    "        print the tool version and exit\n\n" +
+    "output options:\n" +
+    "      --csv\n" +
+    "        format output as CSV\n\n" +
+    "      --json\n" +
+    "        format output as JSON\n\n" +
+    "      --text\n" +
+    "        format output as text\n\n" +
+    "      --xml\n" +
+    "        format output as XML\n\n" +
+    "      --delimiter=<string>\n" +
+    "        delimeter for CSV format\n\n" +
+    "      --spacer=<number>\n" +
+    "        the number of space characters to use to indent JSON and XML\n\n" +
+    "      --locks\n" +
+    "        report on use of per-database locks\n\n" +
+    "  -n, --rowcount=<count>\n" +
+    "        number of stats lines toprint (0 for indefinite)\n\n" +
+    "connection options:\n" +
+    "  -h, --host=<hostname>\n" +
+    "        mongodb host(s) to connect to (use commas to delimit hosts)\n\n" +
+    "      --port=<port>\n" +
+    "        server port (can also use --host hostname:port)\n\n" +
+    "ssl options:\n" +
+    "      --ssl\n" +
+    "        connect to a mongod or mongosthat has ssl enabled\n\n" +
+    "      --sslCAFile=<filename>\n" +
+    "        the .pem file containing the root certificate chain from\n" +
+    "        the certificate authority\n\n" +
+    "      --sslPEMKeyFile=<filename>\n" +
+    "        the .pem file containing the certificate and key\n\n" +
+    "      --sslPEMKeyPassword=<password>\n" +
+    "        the password to decrypt the sslPEMKeyFile, if necessary\n\n" +
+    "      --sslCRLFile=<filename>\n" +
+    "        the .pem file containing the certificate revocation list\n\n" +
+    "      --sslAllowInvalidCertificates\n" +
+    "        bypass the validation for server certificates\n\n" +
+    "      --sslAllowInvalidHostnames\n" +
+    "        bypass the validation for server name\n\n" +
+    "      --sslFIPSMode\n" +
+    "        use FIPS mode of the installed openssl library\n\n" +
+    "authentication options:\n" +
+    "  -u, --username=<username>\n" +
+    "        username for authentication\n\n" +
+    "  -p, --password=<password>\n" +
+    "        password for authentication\n\n" +
+    "      --authenticationDatabase=<database-name>\n" +
+    "        database that holds the user's credentials\n\n" +
+    "      --authenticationMechanism=<mechanism>\n" +
+    "        authentication mechanism to use\n\n" +
+    "kerberos options:\n" +
+    "      --gssapiServiceName=<service-name>\n" +
+    "        service name to use when authenticating using GSSAPI/Kerberos\n" +
+    "        (default: mongodb)\n\n" +
+    "      --gssapiHostName=<host-name>\n" +
+    "        hostname to use when authenticating using GSSAPI/Kerberos\n" +
+    "        (default: <remote server's address>)\n\n" +
+    "uri options:\n" +
+    "      --uri=mongodb-uri\n" +
+    "        mongodb uri connection string\n\n" +
+    "See https://github.com/anars/mongodb-dba-tools/ for more information.\n");
   process.exit(0);
-} else if (printVersion) {
+} else if (version) {
+  console.log("MongoDB Database Administrators' Tools version ### by Kay Anar" +
+    "Copyright (c) 2020 Anar Software LLC http://anars.com\n" +
+    "Permission is hereby granted, free of charge, to any person obtaining a" +
+    "copy of this software and associated documentation files (the" +
+    "\"Software\"), to deal in the Software without restriction, including" +
+    "without limitation the rights to use, copy, modify, merge, publish," +
+    "distribute, sublicense, and/or sell copies of the Software, and to" +
+    "permit persons to whom the Software is furnished to do so, subject to" +
+    "the following conditions:\n" +
+    "The above copyright notice and this permission notice shall be included" +
+    "in all copies or substantial portions of the Software.\n" +
+    "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS" +
+    "OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF" +
+    "MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT." +
+    "IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY" +
+    "CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT," +
+    "TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE" +
+    "SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.");
   process.exit(0);
 }
 
@@ -188,9 +217,10 @@ ${json.totals[collection].write.count.toString().padStart(16, " ")}`);
 
 const {spawn} = require("child_process");
 const mongotop = spawn("mongotop", [
-  ...mongotopParams,
+  ...params,
   "--quiet",
-  "--json"]);
+  "--json"
+]);
 
 mongotop.stdout.on("data", (data) => {
   const json = JSON.parse(data);
@@ -224,6 +254,10 @@ mongotop.stdout.on("data", (data) => {
 
 mongotop.stderr.on("data", (data) => {
   console.error(`${data}`);
+});
+
+mongotop.on("error", (error) => {
+  console.error("An error occurred while running \"mongotop\". Pleae check that it's installed and working correctly.");
 });
 
 mongotop.on("close", (code) => {

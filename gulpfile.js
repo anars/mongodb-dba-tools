@@ -1,35 +1,21 @@
 const package = require("./package.json");
 const gulp = require("gulp");
-const del = require("del");
 const strip = require("gulp-strip-comments");
 const header = require("gulp-header");
 const minify = require("gulp-uglify-es").default;
+const rename = require("gulp-rename");
+const replace = require("gulp-replace");
 
-const buildPath = "build/";
-
-const clean = (done) => {
-  del.sync(buildPath);
-  done();
-};
-
-const distTop = (done) => gulp.src("top.js")
+const top = (done) => gulp.src("top.js")
+    .pipe(replace("###", package.version))
     .pipe(strip())
     .pipe(minify())
     .pipe(header("#!/usr/bin/env node\n"))
-    .pipe(gulp.dest(buildPath));
+    .pipe(rename("mongotopx"))
+    .pipe(gulp.dest("./build"));
 
-const buildTop = (done) => gulp.src("top.js")
-    .pipe(strip())
-    .pipe(header("#!/usr/bin/env node\n"))
-    .pipe(gulp.dest(buildPath));
+const license = (done) => gulp.src("license.txt")
+    .pipe(replace("###", package.version))
+    .pipe(gulp.dest("./build"));
 
-exports.clean = gulp.series(clean);
-
-exports.build = gulp.series(exports.clean, buildTop);
-
-exports.dist = gulp.series(exports.clean, distTop);
-
-exports.default = (done) => {
-  console.log(`\n* * * Available tasks: ${Object.keys(exports)} * * *\n`);
-  return done();
-};
+exports.default = gulp.series(top, license);
