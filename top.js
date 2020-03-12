@@ -4,15 +4,15 @@ let delimiter = ",";
 let spacer = 2;
 const params = [];
 
-process.argv.forEach((param, index) => {
+process.argv.forEach((arg, index) => {
   if (index > 1) { // eslint-disable-line no-magic-numbers
-    if (param.toLowerCase().startsWith("--collection=")) {
-      nsRegEx = new RegExp(param.substr(13), "u"); // eslint-disable-line no-magic-numbers
-    } else if (param.toLowerCase().startsWith("--delimiter=")) {
-      delimiter = param.substr(12); // eslint-disable-line no-magic-numbers
-    } else if (param.toLowerCase().startsWith("--spacer=")) {
-      spacer = Number.parseInt(param.substr(9)); // eslint-disable-line no-magic-numbers
-    } else if (param.toLowerCase() === "--help") {
+    if (arg.toLowerCase().startsWith("--collection=")) {
+      nsRegEx = new RegExp(arg.substr(13), "u"); // eslint-disable-line no-magic-numbers
+    } else if (arg.toLowerCase().startsWith("--delimiter=")) {
+      delimiter = arg.substr(12); // eslint-disable-line no-magic-numbers
+    } else if (arg.toLowerCase().startsWith("--spacer=")) {
+      spacer = Number.parseInt(arg.substr(9)); // eslint-disable-line no-magic-numbers
+    } else if (arg.toLowerCase() === "--help") {
       console.log("Usage:\n" +
         "  mongotopx <options> <polling interval in seconds>\n\n" +
         "mongotopx is a wrapper for mongotop for better collection filtering and\n" +
@@ -90,7 +90,7 @@ process.argv.forEach((param, index) => {
         "        mongodb uri connection string\n\n" +
         "See https://github.com/anars/mongodb-dba-tools/ for more information.\n");
       process.exit(0);
-    } else if (param.toLowerCase() === "--version") {
+    } else if (arg.toLowerCase() === "--version") {
       console.log("MongoDB Database Administrators' Tools version ### by Kay Anar" +
         "Copyright (c) 2020 Anar Software LLC http://anars.com\n" +
         "Permission is hereby granted, free of charge, to any person obtaining a" +
@@ -110,16 +110,16 @@ process.argv.forEach((param, index) => {
         "TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE" +
         "SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.");
       process.exit(0);
-    } else if (param.toLowerCase() === "--json") {
+    } else if (arg.toLowerCase() === "--json") {
       format = "json";
-    } else if (param.toLowerCase() === "--csv") {
+    } else if (arg.toLowerCase() === "--csv") {
       format = "csv";
-    } else if (param.toLowerCase() === "--xml") {
+    } else if (arg.toLowerCase() === "--xml") {
       format = "xml";
-    } else if (param.toLowerCase() === "--text") {
+    } else if (arg.toLowerCase() === "--text") {
       format = "text";
-    } else if (!param.toLowerCase().startsWith("--verbose") && !param.toLowerCase().startsWith("-v")) {
-      params.push(param);
+    } else if (!arg.toLowerCase().startsWith("--verbose") && !arg.toLowerCase().startsWith("-v")) {
+      params.push(arg);
     }
   }
 });
