@@ -1,5 +1,5 @@
-MongoDB Database Administrators' Tools version ### by Kay Anar
-Copyright (c) 2020 Anar Software LLC http://anars.com
+MongoDB Database Administrators' Tools version #VERSION# by Kay Anar
+Copyright (c) #YEAR# Anar Software LLC http://anars.com
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
